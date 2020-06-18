@@ -79,7 +79,8 @@ class callback_mixins():
             if exit_code: # Didn't actually execute block
                 return None
             if not self.in_kernel(cpu): # Once we're out of kernel code, grab procname
-                name = self.get_process_name(cpu)
+                proc = self.plugins['osi'].get_current_process(cpu)
+                name = ffi.string(proc.name) if proc != ffi.NULL and proc.name != ffi.NULL else "unknown"
                 asid = self.libpanda.panda_current_asid(cpu)
                 self.asid_mapping[asid] = name
                 self.procname_changed(name)
